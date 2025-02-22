@@ -1,0 +1,102 @@
+.airtable-viewer-pagination {
+    margin: 20px 0;
+    text-align: center;
+}
+
+.airtable-viewer-pagination a,
+.airtable-viewer-pagination span {
+    display: inline-block;
+    padding: 5px 10px;
+    margin: 0 3px;
+    border: 1px solid #ddd;
+    border-radius: 3px;
+    text-decoration: none;
+}
+
+.airtable-viewer-pagination span.current {
+    background-color: #0073aa;
+    color: white;
+    border-color: #0073aa;
+}
+
+.airtable-viewer-pagination a:hover {
+    background-color: #f5f5f5;
+}
+
+.copy-shortcode {
+    margin-left: 10px !important;
+}
+
+/* Template form styles */
+#template-form .form-table th {
+    width: 200px;
+}
+
+#template-form .large-text {
+    font-family: monospace;
+    tab-size: 4;
+}
+
+/* Settings page styles */
+#global_styles {
+    font-family: monospace;
+    tab-size: 4;
+}
+
+/* Template list table styles */
+.wp-list-table .column-actions {
+    width: 15%;
+}
+
+.wp-list-table .column-shortcode {
+    width: 25%;
+}
+
+.wp-list-table code {
+    display: inline-block;
+    margin-right: 10px;
+}
+
+/* Button styles */
+.button-link-delete {
+    color: #a00;
+}
+
+.button-link-delete:hover {
+    color: #dc3232;
+}
+
+/* Form validation styles */
+.form-table input:invalid,
+.form-table textarea:invalid {
+    border-color: #dc3232;
+}
+
+/* Help text styles */
+.description {
+    margin-top: 5px;
+    color: #666;
+}
+
+/* Loading state styles */
+.loading {
+    opacity: 0.5;
+    pointer-events: none;
+}
+
+/* Success/Error message styles */
+.notice {
+    margin: 20px 0;
+    padding: 10px;
+    border-left: 4px solid;
+}
+
+.notice-success {
+    border-color: #46b450;
+    background-color: #ecf7ed;
+}
+
+.notice-error {
+    border-color: #dc3232;
+    background-color: #fbeaea;
+} 
