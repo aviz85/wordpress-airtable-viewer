@@ -7,26 +7,36 @@ $templates = $this->template->get_all();
 ?>
 
 <div class="wrap">
-    <h1 class="wp-heading-inline">Airtable Templates</h1>
-    <a href="?page=airtable-viewer&action=new" class="page-title-action">Add New</a>
+    <h1 class="wp-heading-inline">תבניות Airtable</h1>
+    <a href="?page=airtable-viewer&action=new" class="page-title-action">הוסף תבנית חדשה</a>
+    
+    <div class="notice notice-info">
+        <p><strong>כיצד להשתמש בתוסף:</strong></p>
+        <ol>
+            <li>צור תבנית חדשה על ידי לחיצה על "הוסף תבנית חדשה"</li>
+            <li>הגדר את פרטי התבנית (שם, מזהה בסיס נתונים, טבלה וכו')</li>
+            <li>עצב את התצוגה באמצעות HTML עם משתנים מותאמים אישית (למשל: <code>{{שם_השדה}}</code>)</li>
+            <li>העתק את קוד הקיצור (shortcode) והדבק אותו בכל מקום בו תרצה להציג את הנתונים</li>
+        </ol>
+    </div>
     
     <?php settings_errors(); ?>
 
     <table class="wp-list-table widefat fixed striped">
         <thead>
             <tr>
-                <th>Name</th>
-                <th>Shortcode</th>
-                <th>Base ID</th>
-                <th>Table</th>
-                <th>Pagination</th>
-                <th>Actions</th>
+                <th>שם התבנית</th>
+                <th>קוד קיצור</th>
+                <th>מזהה בסיס</th>
+                <th>טבלה</th>
+                <th>עימוד</th>
+                <th>פעולות</th>
             </tr>
         </thead>
         <tbody>
             <?php if (empty($templates)): ?>
                 <tr>
-                    <td colspan="6">No templates found. <a href="?page=airtable-viewer&action=new">Create one</a>.</td>
+                    <td colspan="6">לא נמצאו תבניות. <a href="?page=airtable-viewer&action=new">צור תבנית חדשה</a>.</td>
                 </tr>
             <?php else: ?>
                 <?php foreach ($templates as $template): ?>
@@ -35,18 +45,18 @@ $templates = $this->template->get_all();
                         <td>
                             <code>[airtable_view template="<?php echo esc_attr($template['shortcode']); ?>"]</code>
                             <button class="button button-small copy-shortcode" data-shortcode='[airtable_view template="<?php echo esc_attr($template['shortcode']); ?>"]'>
-                                Copy
+                                העתק
                             </button>
                         </td>
                         <td><?php echo esc_html($template['base_id']); ?></td>
                         <td><?php echo esc_html($template['table_name']); ?></td>
-                        <td><?php echo $template['pagination_enabled'] ? 'Yes (' . esc_html($template['items_per_page']) . ' per page)' : 'No'; ?></td>
+                        <td><?php echo $template['pagination_enabled'] ? 'כן (' . esc_html($template['items_per_page']) . ' פריטים לעמוד)' : 'לא'; ?></td>
                         <td>
                             <a href="?page=airtable-viewer&action=edit&template_id=<?php echo esc_attr($template['id']); ?>" class="button button-small">
-                                Edit
+                                ערוך
                             </a>
                             <button class="button button-small button-link-delete delete-template" data-id="<?php echo esc_attr($template['id']); ?>">
-                                Delete
+                                מחק
                             </button>
                         </td>
                     </tr>
@@ -54,6 +64,16 @@ $templates = $this->template->get_all();
             <?php endif; ?>
         </tbody>
     </table>
+
+    <div class="airtable-viewer-help">
+        <h3>טיפים לשימוש:</h3>
+        <ul>
+            <li>ניתן להשתמש בפרמטרים נוספים בקוד הקיצור, למשל: <code>[airtable_view template="products" filter="category=electronics" sort="price:desc"]</code></li>
+            <li>ניתן להגדיר עימוד (pagination) לכל תבנית בנפרד</li>
+            <li>השתמש במשתנים כמו <code>{{field_name}}</code> בתבנית ה-HTML כדי להציג שדות מ-Airtable</li>
+            <li>ניתן להשתמש במשתנים מיוחדים כמו <code>{{index}}</code> ו-<code>{{record_id}}</code></li>
+        </ul>
+    </div>
 </div>
 
 <script>
@@ -62,15 +82,15 @@ jQuery(document).ready(function($) {
         var shortcode = $(this).data('shortcode');
         navigator.clipboard.writeText(shortcode).then(function() {
             var $button = $(this);
-            $button.text('Copied!');
+            $button.text('הועתק!');
             setTimeout(function() {
-                $button.text('Copy');
+                $button.text('העתק');
             }, 2000);
         }.bind(this));
     });
 
     $('.delete-template').click(function() {
-        if (!confirm('Are you sure you want to delete this template?')) {
+        if (!confirm('האם אתה בטוח שברצונך למחוק תבנית זו? פעולה זו אינה ניתנת לביטול.')) {
             return;
         }
 
@@ -90,17 +110,16 @@ jQuery(document).ready(function($) {
                     $row.fadeOut(400, function() {
                         $(this).remove();
                         if ($('tbody tr').length === 0) {
-                            $('tbody').html('<tr><td colspan="6">No templates found. <a href="?page=airtable-viewer&action=new">Create one</a>.</td></tr>');
+                            $('tbody').html('<tr><td colspan="6">לא נמצאו תבניות. <a href="?page=airtable-viewer&action=new">צור תבנית חדשה</a>.</td></tr>');
                         }
                     });
                 } else {
-                    alert('Error deleting template: ' + response.data);
+                    alert('שגיאה במחיקת התבנית: ' + response.data);
                 }
             },
             error: function() {
-                alert('Error deleting template. Please try again.');
+                alert('שגיאה במחיקת התבנית. אנא נסה שנית.');
             }
         });
     });
-});
-</script> 
+});</script> 

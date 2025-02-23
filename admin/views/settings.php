@@ -7,7 +7,17 @@ $settings = get_option('airtable_viewer_settings');
 ?>
 
 <div class="wrap">
-    <h1>Airtable Viewer Settings</h1>
+    <h1>הגדרות Airtable Viewer</h1>
+
+    <div class="notice notice-info">
+        <p><strong>הגדרת התוסף:</strong></p>
+        <ol>
+            <li>הזן את מפתח ה-API של Airtable שלך (ניתן למצוא אותו בהגדרות החשבון ב-Airtable)</li>
+            <li>הזן את מזהה הבסיס הדיפולטי (אופציונלי) שישמש כברירת מחדל בתבניות חדשות</li>
+            <li>הגדר את זמן המטמון (Cache) כדי לשפר את הביצועים</li>
+            <li>הוסף סגנונות CSS גלובליים שיחולו על כל התצוגות</li>
+        </ol>
+    </div>
 
     <?php settings_errors(); ?>
 
@@ -16,61 +26,81 @@ $settings = get_option('airtable_viewer_settings');
         
         <table class="form-table">
             <tr>
-                <th scope="row"><label for="api_key">API Key</label></th>
+                <th scope="row"><label for="api_key">מפתח API</label></th>
                 <td>
                     <input type="password" id="api_key" name="api_key" class="regular-text"
                            value="<?php echo esc_attr($settings['api_key']); ?>" required>
                     <p class="description">
-                        Your Airtable API key. You can find this in your 
-                        <a href="https://airtable.com/account" target="_blank">Airtable account settings</a>.
+                        מפתח ה-API של Airtable שלך. ניתן למצוא אותו 
+                        <a href="https://airtable.com/account" target="_blank">בהגדרות החשבון של Airtable</a>.
                     </p>
                 </td>
             </tr>
             <tr>
-                <th scope="row"><label for="default_base_id">Default Base ID</label></th>
+                <th scope="row"><label for="default_base_id">מזהה בסיס דיפולטי</label></th>
                 <td>
                     <input type="text" id="default_base_id" name="default_base_id" class="regular-text"
                            value="<?php echo esc_attr($settings['default_base_id']); ?>">
                     <p class="description">
-                        The default Airtable base ID to use. You can find this in your base's API documentation.
+                        מזהה בסיס Airtable שישמש כברירת מחדל. ניתן למצוא אותו בדוקומנטציית ה-API של הבסיס.
                     </p>
                 </td>
             </tr>
             <tr>
-                <th scope="row"><label for="cache_duration">Cache Duration</label></th>
+                <th scope="row"><label for="cache_duration">זמן מטמון (שניות)</label></th>
                 <td>
                     <input type="number" id="cache_duration" name="cache_duration" class="small-text"
                            value="<?php echo esc_attr($settings['cache_duration']); ?>" min="0">
                     <p class="description">
-                        How long to cache API responses, in seconds. Set to 0 to disable caching.
+                        כמה זמן לשמור את תוצאות ה-API במטמון (בשניות). הגדר ל-0 כדי לבטל את המטמון.
+                        <br>מומלץ: 300 שניות (5 דקות)
                     </p>
                 </td>
             </tr>
             <tr>
-                <th scope="row"><label for="global_styles">Global Styles</label></th>
+                <th scope="row"><label for="global_styles">סגנונות גלובליים</label></th>
                 <td>
                     <textarea id="global_styles" name="global_styles" class="large-text code" rows="10"><?php 
                         echo esc_textarea($settings['global_styles']); 
                     ?></textarea>
                     <p class="description">
-                        CSS styles to apply to all Airtable views. These will be added to the &lt;head&gt; of your site.
+                        קוד CSS שיחול על כל תצוגות Airtable. יתווסף ל-&lt;head&gt; של האתר.
+                        <br>דוגמה:
+                        <pre>
+.airtable-viewer-container {
+    margin: 20px 0;
+}
+.airtable-viewer-pagination {
+    text-align: center;
+}
+                        </pre>
                     </p>
                 </td>
             </tr>
         </table>
 
         <p class="submit">
-            <button type="submit" name="submit" class="button button-primary">Save Settings</button>
-            <button type="button" id="test-connection" class="button">Test Connection</button>
+            <button type="submit" name="submit" class="button button-primary">שמור הגדרות</button>
+            <button type="button" id="test-connection" class="button">בדוק חיבור</button>
         </p>
     </form>
+
+    <div class="airtable-viewer-help">
+        <h3>טיפים להגדרה:</h3>
+        <ul>
+            <li>מומלץ להשתמש במטמון כדי לשפר את ביצועי האתר ולהפחית את מספר הקריאות ל-API</li>
+            <li>אם אתה משתמש בבסיס Airtable אחד, הגדר אותו כברירת מחדל כדי לחסוך זמן ביצירת תבניות</li>
+            <li>השתמש בסגנונות הגלובליים כדי לשמור על עיצוב אחיד בכל התצוגות</li>
+            <li>בדוק את החיבור אחרי הזנת מפתח ה-API כדי לוודא שהוא תקין</li>
+        </ul>
+    </div>
 </div>
 
 <script>
 jQuery(document).ready(function($) {
     $('#test-connection').click(function() {
         var $button = $(this);
-        $button.prop('disabled', true).text('Testing...');
+        $button.prop('disabled', true).text('בודק חיבור...');
         
         $.ajax({
             url: airtableViewerAdmin.ajaxurl,
@@ -82,16 +112,16 @@ jQuery(document).ready(function($) {
             },
             success: function(response) {
                 if (response.success) {
-                    alert('Connection successful!');
+                    alert('החיבור הצליח! מפתח ה-API תקין.');
                 } else {
-                    alert('Connection failed: ' + response.data);
+                    alert('החיבור נכשל: ' + response.data);
                 }
             },
             error: function() {
-                alert('Error testing connection. Please try again.');
+                alert('שגיאה בבדיקת החיבור. אנא נסה שנית.');
             },
             complete: function() {
-                $button.prop('disabled', false).text('Test Connection');
+                $button.prop('disabled', false).text('בדוק חיבור');
             }
         });
     });
